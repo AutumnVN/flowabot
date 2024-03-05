@@ -941,6 +941,45 @@ async function updateTrackedUsers(){
 
 // }
 
+async function refreshAccessToken(){
+
+    const token_url = "https://osu.ppy.sh/oauth/token";
+     let data = await fs.readFile('../osu-oauth-token-refresh/access_token.json', 'utf8')
+     let json = JSON.parse(data)
+     let refresh_token = json.refresh_token;
+
+    let headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    };
+
+    let body = {
+        "client_id": config.credentials.client_id,
+        "client_secret": config.credentials.client_secret,
+        "refresh_token": refresh_token,
+        "grant_type": "refresh_token" 
+    }
+
+    const token_response = await axios(token_url, {
+        method: "POST",
+        headers,
+        data: body,
+    })
+
+    const token_res = await token_response.data;
+    const token_json = JSON.stringify(token_res);
+
+    const write = await fs.writeFile('../osu-oauth-token-refresh/access_token.json', token_json, 'utf8');
+
+    const token = token_res.access_token;
+    const expires = token_res.expires_in - 1;
+
+    access_token = token;
+
+    setTimeout(refreshAccessToken, expires * 1000);
+
+}
+
 async function getUserId(u){
     let res;
     let username = await u.replace(/\+/g, " ")
@@ -979,6 +1018,7 @@ module.exports = {
 		last_beatmap = _last_beatmap;
 
 		if(client_id && client_secret){
+            await refreshAccessToken();
             await updateAccessToken();
             updateTrackedUsers();
 		}
