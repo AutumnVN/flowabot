@@ -4,7 +4,7 @@ const helper = require('../helper.js');
 async function getBeatmapIdFromMessage(msg) {
     if (msg.reference) {
         const replied_msg = await msg.channel.messages.fetch(msg.reference.messageID)
-        const beatmap_id = osu.parse_beatmap_url(replied_msg.embeds[0].url)
+        const beatmap_id = osu.parse_beatmap_url(replied_msg.author.id === '289066747443675143' ? replied_msg.embeds[0].author?.url : replied_msg.embeds[0].url)
         return beatmap_id
     } else {
         return
