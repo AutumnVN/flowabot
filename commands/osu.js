@@ -2,7 +2,7 @@ const osu = require('../osu.js');
 const helper = require('../helper.js');
 
 module.exports = {
-    command: ['osu', 'osu2'],
+    command: ['osu', 'su'],
     description: "Show osu! stats.",
     usage: '[username]',
     example: {
@@ -14,27 +14,25 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let { argv, msg, user_ign } = obj;
 
-            let extended = argv[0] == 'osu2';
-
             let osu_user = helper.getUsername(argv, msg, user_ign);
 
-            if(!osu_user){
-                if(user_ign[msg.author.id] == undefined)
-                    reject(helper.commandHelp('ign-set'));
+            if (!osu_user) {
+                if (user_ign[msg.author.id] == undefined)
+                    reject(helper.commandHelp('set'));
                 else
                     reject(helper.commandHelp('osu'));
 
                 return false;
             }
 
-            osu.get_user({u: osu_user, extended}, (err, embed) => {
-                if(err){
+            osu.get_user({ u: osu_user, extended: true }, (err, embed) => {
+                if (err) {
                     reject(err);
                     helper.error(err);
                     return false;
                 }
 
-                resolve({embed: embed});
+                resolve({ embed: embed });
             });
         });
     }

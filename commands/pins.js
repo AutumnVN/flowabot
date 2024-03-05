@@ -29,27 +29,27 @@ module.exports = {
             let count = 5;
             let match = argv[0].match(/\d+/);
 
-            if(match != null && !isNaN(match[0]))
+            if (match != null && !isNaN(match[0]))
                 count = Math.max(1, Math.min(match[0], 25));
 
-            if(!pin_user){
-                if(user_ign[msg.author.id] == undefined){
-                    reject(helper.commandHelp('ign-set'));
-                }else{
+            if (!pin_user) {
+                if (user_ign[msg.author.id] == undefined) {
+                    reject(helper.commandHelp('set'));
+                } else {
                     reject(helper.commandHelp('pins'));
                 }
 
                 return false;
-            }else{
+            } else {
 
-                osu.get_pins({user: pin_user, count},(err, response) => {
-                    if(err){
+                osu.get_pins({ user: pin_user, count }, (err, response) => {
+                    if (err) {
                         helper.error(err);
                         reject(err);
-                    }else{
+                    } else {
                         const { pins, user } = response;
 
-                        let embed = {fields: []};
+                        let embed = { fields: [] };
                         embed.color = 12277111;
                         embed.author = {
                             url: `https://osu.ppy.sh/u/${user.id}`,
@@ -63,39 +63,39 @@ module.exports = {
 
                         embed.fields = [];
 
-                        for(const pin of pins){
+                        for (const pin of pins) {
                             let name = `${pin.rank_emoji} ${pin.stars.toFixed(2)}★ ${pin.beatmap.artist} - ${pin.beatmap.title} [${pin.beatmap.version}]`;
 
-                            if(pin.mods.length > 0)
+                            if (pin.mods.length > 0)
                                 name += ` +${pin.mods.map(mod => mod.acronym).join(",")}`;
 
                             name += ` ${pin.accuracy}%`;
 
                             let value = `[🔗](https://osu.ppy.sh/b/${pin.beatmap.beatmap_id}) `;
 
-                            if(Number(pin.max_combo) < pin.beatmap.max_combo && pin.pp_fc > pin.pp)
+                            if (Number(pin.max_combo) < pin.beatmap.max_combo && pin.pp_fc > pin.pp)
                                 value += `**${Number(pin.pp).toFixed(2)}pp** ➔ ${pin.pp_fc.toFixed(2)}pp for ${pin.acc_fc}% FC${helper.sep}`;
                             else
                                 value += `**${Number(pin.pp).toFixed(2)}pp**${helper.sep}`
 
-                            if(Number(pin.max_combo) < pin.beatmap.max_combo)
+                            if (Number(pin.max_combo) < pin.beatmap.max_combo)
                                 value += `${pin.max_combo}/${pin.beatmap.max_combo}x`;
                             else
                                 value += `${pin.max_combo}x`;
 
-                            if(Number(pin.statistics.ok ?? 0) > 0 || Number(pin.statistics.meh ?? 0) > 0 || Number(pin.statistics.miss ?? 0) > 0)
+                            if (Number(pin.statistics.ok ?? 0) > 0 || Number(pin.statistics.meh ?? 0) > 0 || Number(pin.statistics.miss ?? 0) > 0)
                                 value += helper.sep;
 
-                            if(Number(pin.statistics.ok ?? 0) > 0)
+                            if (Number(pin.statistics.ok ?? 0) > 0)
                                 value += `${pin.statistics.ok}x100`;
 
-                            if(Number(pin.statistics.meh ?? 0) > 0){
-                                if(Number(pin.statistics.ok ?? 0) > 0) value += helper.sep;
+                            if (Number(pin.statistics.meh ?? 0) > 0) {
+                                if (Number(pin.statistics.ok ?? 0) > 0) value += helper.sep;
                                 value += `${pin.statistics.meh ?? 0}x50`;
                             }
 
-                            if(Number(pin.statistics.miss ?? 0) > 0){
-                                if(Number(pin.statistics.ok ?? 0) > 0 || Number(pin.statistics.meh ?? 0) > 0) value += helper.sep;
+                            if (Number(pin.statistics.miss ?? 0) > 0) {
+                                if (Number(pin.statistics.ok ?? 0) > 0 || Number(pin.statistics.meh ?? 0) > 0) value += helper.sep;
                                 value += `${pin.statistics.miss ?? 0}xMiss`;
                             }
 
@@ -106,7 +106,7 @@ module.exports = {
 
                         resolve({ embed });
                     }
-                })   
+                })
             }
         })
     }

@@ -39,68 +39,69 @@ module.exports = {
             getBeatmapIdFromMessage(msg).then((beatmap_id) => {
                 let compare_beatmap = beatmap_id;
 
-                if(!(msg.channel.id in last_beatmap)){
+                if (!(msg.channel.id in last_beatmap)) {
                     reject('No recent score to compare to found. 💀');
                     return false;
                 }
-                if(!compare_beatmap){
+                if (!compare_beatmap) {
                     compare_beatmap = last_beatmap[msg.channel.id].beatmap_id;
                 }
-    
+
                 let compare_mods;
-    
+
                 argv.slice(1).forEach(arg => {
-                    if(arg.startsWith('+')){
-                        if(arg.startsWith('+mods'))
+                    if (arg.startsWith('+')) {
+                        if (arg.startsWith('+mods'))
                             compare_mods = ['mods', ...last_beatmap[msg.channel.id].mods];
                         else
                             compare_mods = arg.toUpperCase().substr(1).match(/.{1,2}/g);
                     }
-                    if(arg == '*')
+                    if (arg == '*')
                         compare_user = '*';
                 });
-    
-                if(!compare_user){
-                    if(user_ign[msg.author.id] == undefined)
-                        reject(helper.commandHelp('ign-set'));
+
+                if (!compare_user) {
+                    if (user_ign[msg.author.id] == undefined)
+                        reject(helper.commandHelp('set'));
                     else
                         reject(helper.commandHelp('compare'));
                     return false;
-                }else{
+                } else {
                     let options = {
                         beatmap_id: compare_beatmap,
                         mods: compare_mods
                     };
-    
-                    if(compare_user != '*')
+
+                    if (compare_user != '*')
                         options.user = compare_user;
-                    else if(compare_mods)
+                    else if (compare_mods)
                         compare_mods.splice(1, 0);
-    
+
                     options.index = 1;
-    
+
                     osu.get_score(options, (err, recent, strains_bar, ur_promise) => {
-                        if(err){
+                        if (err) {
                             helper.error(err);
                             reject(err);
-                        }else{
+                        } else {
                             let embed = osu.format_embed(recent);
                             helper.updateLastBeatmap(recent, msg.channel.id, last_beatmap);
-    
-                            if(ur_promise){
+
+                            if (ur_promise) {
                                 resolve({
                                     embed: embed,
-                                    files: [{attachment: strains_bar, name: 'strains_bar.png'}],
+                                    files: [{ attachment: strains_bar, name: 'strains_bar.png' }],
                                     edit_promise: new Promise((resolve, reject) => {
                                         ur_promise.then(recent => {
                                             embed = osu.format_embed(recent);
-                                            resolve({embed});
+                                            resolve({ embed });
                                         });
-                                    })});
-                            }else{
+                                    })
+                                });
+                            } else {
                                 resolve({
                                     embed: embed,
-                                    files: [{attachment: strains_bar, name: 'strains_bar.png'}]
+                                    files: [{ attachment: strains_bar, name: 'strains_bar.png' }]
                                 });
                             }
                         }

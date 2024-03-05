@@ -1,11 +1,11 @@
 const helper = require('../helper.js');
 
 module.exports = {
-    command: 'ign-set',
+    command: 'set',
     description: "Sets your osu! username so you can use osu! commands without specifying a username.",
     usage: '<osu! username>',
     example: {
-        run: "ign-set nathan on osu",
+        run: "set nathan on osu",
         result: "Sets your osu! username to nathan on osu."
     },
     call: obj => {
@@ -14,20 +14,20 @@ module.exports = {
 
             let split = helper.splitWithTail(msg.content, ' ', 1);
 
-            if(split.length < 2){
-                reject(helper.commandHelp('ign-set'));
+            if (split.length < 2) {
+                reject(helper.commandHelp('set'));
                 return false;
             }
 
             let ign = split[1].replace(/\+/g, " ");
             let user_id = msg.author.id;
 
-            if(ign.length == 0){
-                reject(helper.commandHelp('ign-set'));
+            if (ign.length == 0) {
+                reject(helper.commandHelp('set'));
                 return false;
             }
 
-            if(!helper.validUsername(ign)){
+            if (!helper.validUsername(ign)) {
                 reject('Not a valid osu! username!');
                 return false;
             }
@@ -36,7 +36,7 @@ module.exports = {
             helper.setItem('user_ign', JSON.stringify(user_ign));
 
             let author = msg.author.username.endsWith('s') ?
-                `${msg.author.username}'`: `${msg.author.username}'s`;
+                `${msg.author.username}'` : `${msg.author.username}'s`;
 
             msg.channel.send(`${author} ingame name set to ${ign}`);
         });

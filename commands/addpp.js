@@ -29,9 +29,9 @@ module.exports = {
             let acc_to_use = {};
             let pp_to_add_pars = argv[1].split("+");
 
-            pp_to_add_pars.forEach(function(value, index){
+            pp_to_add_pars.forEach(function (value, index) {
                 let acc_to_add_pars = value.split(":");
-                if(acc_to_add_pars.length > 1){
+                if (acc_to_add_pars.length > 1) {
                     let acc_to_add = parseFloat(acc_to_add_pars[1]);
                     acc_to_use[index] = acc_to_add;
                 }
@@ -41,24 +41,24 @@ module.exports = {
             let add_to_user;
             let beatmap = "";
 
-            if(argv[2]){
-                if(argv[2].startsWith("<@"))
+            if (argv[2]) {
+                if (argv[2].startsWith("<@"))
                     argv[2] = argv[2].substr(2).split(">")[0];
 
-                if(argv[2].toLowerCase() in user_ign)
+                if (argv[2].toLowerCase() in user_ign)
                     add_to_user = user_ign[argv[2].toLowerCase()];
                 else
                     add_to_user = argv[2];
-            }else{
-                if(user_ign[msg.author.id] === undefined){
-                    reject(helper.commandHelp('ign-set'));
-                }else{
+            } else {
+                if (user_ign[msg.author.id] === undefined) {
+                    reject(helper.commandHelp('set'));
+                } else {
                     add_to_user = user_ign[msg.author.id];
                 }
             }
 
-            if(argv[3]){
-                for(let x = 3; x < argv.length; x++){
+            if (argv[3]) {
+                for (let x = 3; x < argv.length; x++) {
                     beatmap += argv[x] + " ";
                 }
                 beatmap = beatmap.trim();
@@ -66,11 +66,11 @@ module.exports = {
 
             let mode = 0;
 
-            if(add_to_user && pp_to_add.length > 0){
+            if (add_to_user && pp_to_add.length > 0) {
                 osu.add_pp(add_to_user, pp_to_add, beatmap, output => {
                     resolve(output);
                 });
-            }else{
+            } else {
                 reject(helper.commandHelp('addpp'));
             }
         });

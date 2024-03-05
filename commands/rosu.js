@@ -9,36 +9,36 @@ const osu = require('../osu.js');
 const config = require('../config.json');
 
 const mods_enum = {
-    ''    : 0,
-    'NF'  : 1,
-    'EZ'  : 2,
-    'TD'  : 4,
-    'HD'  : 8,
-    'HR'  : 16,
-    'SD'  : 32,
-    'DT'  : 64,
-    'RX'  : 128,
-    'HT'  : 256,
-    'NC'  : 512,
-    'FL'  : 1024,
-    'AT'  : 2048,
-    'SO'  : 4096,
-    'AP'  : 8192,
-    'PF'  : 16384,
-    '4K'  : 32768,
-    '5K'  : 65536,
-    '6K'  : 131072,
-    '7K'  : 262144,
-    '8K'  : 524288,
-    'FI'  : 1048576,
-    'RD'  : 2097152,
-    'LM'  : 4194304,
-    '9K'  : 16777216,
-    '10K' : 33554432,
-    '1K'  : 67108864,
-    '3K'  : 134217728,
-    '2K'  : 268435456,
-    'V2'  : 536870912,
+    '': 0,
+    'NF': 1,
+    'EZ': 2,
+    'TD': 4,
+    'HD': 8,
+    'HR': 16,
+    'SD': 32,
+    'DT': 64,
+    'RX': 128,
+    'HT': 256,
+    'NC': 512,
+    'FL': 1024,
+    'AT': 2048,
+    'SO': 4096,
+    'AP': 8192,
+    'PF': 16384,
+    '4K': 32768,
+    '5K': 65536,
+    '6K': 131072,
+    '7K': 262144,
+    '8K': 524288,
+    'FI': 1048576,
+    'RD': 2097152,
+    'LM': 4194304,
+    '9K': 16777216,
+    '10K': 33554432,
+    '1K': 67108864,
+    '3K': 134217728,
+    '2K': 268435456,
+    'V2': 536870912,
 };
 
 const ar_ms_step1 = 120;
@@ -52,7 +52,7 @@ const od_ms_step = 6;
 const od0_ms = 79.5;
 const od10_ms = 19.5;
 
-function getModsEnum(mods){
+function getModsEnum(mods) {
     let return_value = 0;
 
     if (mods.includes("nc")) mods.push("dt");
@@ -70,7 +70,7 @@ function round(num) {
 
 function isFloat(value) {
     return (!isNaN(value) && value.toString().indexOf('.') != -1)
-} 
+}
 
 module.exports = {
     command: ['rosu', 'rosu-pp', 'rpp', 'pp'],
@@ -79,15 +79,15 @@ module.exports = {
     usage: '<map link> [+HDDT] [99.23%] [2x100] [1x50] [3m] [342x] [1.2*] [OD9.5] [AR10.3] [CS6] [HP8]',
     example: [
         {
-        run: "rosu https://osu.ppy.sh/b/75 +HD 4x100 343x CS2",
-        result: "Calculates pp on this beatmap with HD applied, 4 100s, 343 Combo and CS set to 2."
+            run: "rosu https://osu.ppy.sh/b/75 +HD 4x100 343x CS2",
+            result: "Calculates pp on this beatmap with HD applied, 4 100s, 343 Combo and CS set to 2."
         },
         {
             run: "rosu https://osu.ppy.sh/b/774965 99% 1.3*",
             result: "Calculates pp on this beatmap with 99% accuracy and a custom speed rate of 1.3*."
         }
     ],
-    configRequired: ['pp_path', 'debug', 'osu_cache_path'],
+    configRequired: ['debug', 'osu_cache_path'],
     call: async obj => {
         return new Promise((resolve, reject) => {
             let { argv, msg, last_beatmap } = obj;
@@ -100,42 +100,42 @@ module.exports = {
 
             let acc_percent, combo, n100, n50, nmiss, od, ar, cs, hp, clock_rate;
 
-            if(beatmap_url.startsWith('<') && beatmap_url.endsWith('>'))
+            if (beatmap_url.startsWith('<') && beatmap_url.endsWith('>'))
                 beatmap_url = beatmap_url.substring(1, beatmap_url.length - 1);
 
-            for(let i = 2; i < argv.length; ++i){
-                if(argv[i].startsWith("+"))
+            for (let i = 2; i < argv.length; ++i) {
+                if (argv[i].startsWith("+"))
                     mods = argv[i].substr(1).toLowerCase().match(/.{1,2}/g);
-                else if(argv[i].endsWith("%"))
+                else if (argv[i].endsWith("%"))
                     acc_percent = parseFloat(argv[i]);
-                else if(argv[i].endsWith("x"))
-                    if(isFloat(argv[i].slice(0, -1))) {
+                else if (argv[i].endsWith("x"))
+                    if (isFloat(argv[i].slice(0, -1))) {
                         clock_rate = parseFloat(argv[i])
                     } else {
                         combo = parseInt(argv[i]);
                     }
-                else if(argv[i].endsWith("x100"))
+                else if (argv[i].endsWith("x100"))
                     n100 = parseInt(argv[i]);
-                else if(argv[i].endsWith("x50"))
+                else if (argv[i].endsWith("x50"))
                     n50 = parseInt(argv[i]);
-                else if(argv[i].endsWith("m"))
+                else if (argv[i].endsWith("m"))
                     nmiss = parseInt(argv[i]);
-                else if(argv[i].endsWith("*"))
+                else if (argv[i].endsWith("*"))
                     clock_rate = parseFloat(argv[i]);
-                else if(argv[i].toLowerCase().startsWith("od"))
+                else if (argv[i].toLowerCase().startsWith("od"))
                     od = parseFloat(argv[i].substr(2));
-                else if(argv[i].toLowerCase().startsWith("ar"))
+                else if (argv[i].toLowerCase().startsWith("ar"))
                     ar = parseFloat(argv[i].substr(2));
-                else if(argv[i].toLowerCase().startsWith("cs"))
+                else if (argv[i].toLowerCase().startsWith("cs"))
                     cs = parseFloat(argv[i].substr(2));
-                else if(argv[i].toLowerCase().startsWith("hp"))
+                else if (argv[i].toLowerCase().startsWith("hp"))
                     hp = parseFloat(argv[i].substr(2));
             }
 
             osu.parse_beatmap_url(beatmap_url, true).then(response => {
                 let beatmap_id = response;
 
-                if(!beatmap_id){
+                if (!beatmap_id) {
                     let download_url = URL.parse(beatmap_url);
                     download_path = path.resolve(os.tmpdir(), `${Math.floor(Math.random() * 1000000) + 1}.osu`);
 
@@ -144,7 +144,7 @@ module.exports = {
                 }
 
                 Promise.resolve(download_promise).then(async () => {
-                    if(beatmap_id === undefined && download_path === undefined){
+                    if (beatmap_id === undefined && download_path === undefined) {
                         reject('Invalid beatmap url');
                         return false;
                     }
@@ -156,18 +156,18 @@ module.exports = {
                     let base_cs = cs
                     let base_hp = hp
 
-                    if(isNaN(cs) || isNaN(ar) || isNaN(od) || isNaN(hp)){
+                    if (isNaN(cs) || isNaN(ar) || isNaN(od) || isNaN(hp)) {
                         let beatmap = await fs.readFile(beatmap_path, 'utf8');
                         let lines = beatmap.split("\n");
-                        lines.forEach(function(line){
-                        if(isNaN(ar) && line.startsWith("ApproachRate:"))
-                            base_ar = line.split(":").pop().trim()
-                        if(isNaN(od) && line.startsWith("OverallDifficulty:"))
-                            base_od = line.split(":").pop().trim()
-                        if(isNaN(cs) && line.startsWith("CircleSize:"))
-                            base_cs = line.split(":").pop().trim()
-                        if(isNaN(hp) && line.startsWith("HPDrainRate:"))
-                            base_hp = line.split(":").pop().trim()
+                        lines.forEach(function (line) {
+                            if (isNaN(ar) && line.startsWith("ApproachRate:"))
+                                base_ar = line.split(":").pop().trim()
+                            if (isNaN(od) && line.startsWith("OverallDifficulty:"))
+                                base_od = line.split(":").pop().trim()
+                            if (isNaN(cs) && line.startsWith("CircleSize:"))
+                                base_cs = line.split(":").pop().trim()
+                            if (isNaN(hp) && line.startsWith("HPDrainRate:"))
+                                base_hp = line.split(":").pop().trim()
                         });
                     }
 
@@ -191,29 +191,29 @@ module.exports = {
                     if (cs)
                         beatmap_params.cs = cs;
 
-                    if(mods.length > 0){
+                    if (mods.length > 0) {
                         params.mods = getModsEnum(mods);
                     }
 
-                    if(combo)
+                    if (combo)
                         params.combo = combo;
 
-                    if(n100)
+                    if (n100)
                         params.n100 = n100;
 
-                    if(n50)
+                    if (n50)
                         params.n50 = n50;
 
-                    if(nmiss)
+                    if (nmiss)
                         params.nMisses = nmiss;
 
-                    if(acc_percent)
+                    if (acc_percent)
                         params.acc = acc_percent;
 
-                    if(clock_rate)
+                    if (clock_rate)
                         params.clockRate = clock_rate;
 
-                    if(beatmap_id){
+                    if (beatmap_id) {
                         helper.updateLastBeatmap({
                             beatmap_id,
                             mods,
@@ -238,11 +238,11 @@ module.exports = {
                     let speed_stars = round(perf.difficulty.speed)
                     let bpm = round(mapAttr.bpm)
                     let stars = round(perf.difficulty.stars)
-                    if(mods.includes('fl')) {
+                    if (mods.includes('fl')) {
                         fl_pp = `, ${round(perf.ppFlashlight)} flashlight pp`
                         fl_stars = `, ${round(perf.difficulty.flashlight)} flashlight stars`
                     }
-                    
+
                     ar = round(mapAttr.ar)
                     od = round(mapAttr.od)
                     cs = round(mapAttr.cs)

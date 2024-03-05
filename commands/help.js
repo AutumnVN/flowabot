@@ -1,14 +1,26 @@
 const helper = require('../helper.js');
 const config = require('../config.json');
+const fs = require('fs');
+const path = require('path');
+
+let commands = [
+    "Get help for a command."
+];
+
+fs.readdir(__dirname, (err, items) => {
+    if (err)
+        throw "Unable to read commands folder";
+
+    items.forEach(item => {
+        if (path.extname(item) == '.js')
+            commands.push('`' + item.substr(0, item.length - 3) + '`');
+    });
+});
 
 module.exports = {
     command: 'help',
     argsRequired: 1,
-    description: [
-        "Get help for a command.",
-        "",
-        "**List of all commands:** https://github.com/respektive/flowabot/blob/master/COMMANDS.md"
-    ],
+    description: commands,
     usage: '<command>',
     example: [
         {

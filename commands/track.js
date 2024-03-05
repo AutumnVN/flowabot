@@ -2,13 +2,13 @@ const osu = require('../osu.js');
 const helper = require('../helper.js');
 
 module.exports = {
-    command: 'osu-track',
+    command: 'track',
     description: "Start tracking the specified user's osu! top plays in the current channel.",
     argsRequired: 1,
     permsRequired: ['MANAGE_MESSAGES'],
-    usage: '<username> [top play limit (1-100, default 50)]',
+    usage: '<username> [top play limit (1-100, default 100)]',
     example: {
-        run: "osu-track nathan_on_osu 50",
+        run: "track nathan_on_osu 50",
         result: "Start tracking nathan on osu's top 50 top plays."
     },
     configRequired: ['credentials.osu_api_key'],
@@ -17,20 +17,20 @@ module.exports = {
             let { argv, msg, user_ign } = obj;
 
             let osu_name = helper.getUsername(argv.slice(0, 2), msg, user_ign);
-            let top = 50;
+            let top = 100;
 
-            if(argv.length > 2){
+            if (argv.length > 2) {
                 let _top = parseInt(argv[2]);
-                if(_top >= 1 && _top <= 100){
+                if (_top >= 1 && _top <= 100) {
                     top = _top;
-                }else{
+                } else {
                     return false;
-                    reject(helper.commandHelp('osu-track'));
+                    reject(helper.commandHelp('track'));
                 }
             }
 
             osu.track_user(msg.channel.id, osu_name, top, (err, message) => {
-                if(err)
+                if (err)
                     reject(err);
                 else
                     resolve(message);

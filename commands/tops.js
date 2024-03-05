@@ -28,26 +28,26 @@ module.exports = {
             let count = 5;
             let match = argv[0].match(/\d+/);
 
-            if(match != null && !isNaN(match[0]))
+            if (match != null && !isNaN(match[0]))
                 count = Math.max(1, Math.min(match[0], 25));
 
-            if(!top_user){
-                if(user_ign[msg.author.id] == undefined){
-                    reject(helper.commandHelp('ign-set'));
-                }else{
+            if (!top_user) {
+                if (user_ign[msg.author.id] == undefined) {
+                    reject(helper.commandHelp('set'));
+                } else {
                     reject(helper.commandHelp('top'));
                 }
 
                 return false;
-            }else{
-                osu.get_tops({user: top_user, count},(err, response) => {
-                    if(err){
+            } else {
+                osu.get_tops({ user: top_user, count }, (err, response) => {
+                    if (err) {
                         helper.error(err);
                         reject(err);
-                    }else{
+                    } else {
                         const { tops, user } = response;
 
-                        let embed = {fields: []};
+                        let embed = { fields: [] };
                         embed.color = 12277111;
                         embed.author = {
                             url: `https://osu.ppy.sh/u/${user.id}`,
@@ -61,39 +61,39 @@ module.exports = {
 
                         embed.fields = [];
 
-                        for(const top of tops){
+                        for (const top of tops) {
                             let name = `${top.rank_emoji} ${top.stars.toFixed(2)}★ ${top.beatmap.artist} - ${top.beatmap.title} [${top.beatmap.version}]`;
 
-                            if(top.mods.length > 0)
+                            if (top.mods.length > 0)
                                 name += ` +${osu.sanitize_mods(top.mods).join(",")}`;
 
                             name += ` ${top.accuracy}%`;
 
                             let value = `[🔗](https://osu.ppy.sh/b/${top.beatmap.beatmap_id}) `;
 
-                            if(Number(top.max_combo) < top.beatmap.max_combo && top.pp_fc > top.pp)
+                            if (Number(top.max_combo) < top.beatmap.max_combo && top.pp_fc > top.pp)
                                 value += `**${Number(top.pp).toFixed(2)}pp** ➔ ${top.pp_fc.toFixed(2)}pp for ${top.acc_fc}% FC${helper.sep}`;
                             else
                                 value += `**${Number(top.pp).toFixed(2)}pp**${helper.sep}`
 
-                            if(Number(top.max_combo) < top.beatmap.max_combo)
+                            if (Number(top.max_combo) < top.beatmap.max_combo)
                                 value += `${top.max_combo}/${top.beatmap.max_combo}x`;
                             else
                                 value += `${top.max_combo}x`;
 
-                            if(Number(top.statistics.ok ?? 0) > 0 || Number(top.statistics.meh ?? 0) > 0 || Number(top.statistics.miss ?? 0) > 0)
+                            if (Number(top.statistics.ok ?? 0) > 0 || Number(top.statistics.meh ?? 0) > 0 || Number(top.statistics.miss ?? 0) > 0)
                                 value += helper.sep;
 
-                            if(Number(top.statistics.ok ?? 0) > 0)
+                            if (Number(top.statistics.ok ?? 0) > 0)
                                 value += `${top.statistics.ok}x100`;
 
-                            if(Number(top.statistics.meh ?? 0) > 0){
-                                if(Number(top.statistics.ok ?? 0) > 0) value += helper.sep;
+                            if (Number(top.statistics.meh ?? 0) > 0) {
+                                if (Number(top.statistics.ok ?? 0) > 0) value += helper.sep;
                                 value += `${top.statistics.meh ?? 0}x50`;
                             }
 
-                            if(Number(top.statistics.miss ?? 0) > 0){
-                                if(Number(top.statistics.ok ?? 0) > 0 || Number(top.statistics.meh ?? 0) > 0) value += helper.sep;
+                            if (Number(top.statistics.miss ?? 0) > 0) {
+                                if (Number(top.statistics.ok ?? 0) > 0 || Number(top.statistics.meh ?? 0) > 0) value += helper.sep;
                                 value += `${top.statistics.miss ?? 0}xMiss`;
                             }
 

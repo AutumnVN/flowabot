@@ -29,7 +29,7 @@ module.exports = {
 
             let command = argv[0].toLowerCase().replace(/[0-9]/g, '');
 
-            if(!module.exports.command.includes(command))
+            if (!module.exports.command.includes(command))
                 return false;
 
             let pass = argv[0].toLowerCase().startsWith('rp') || argv[0].toLowerCase().startsWith('recentpass');
@@ -38,37 +38,38 @@ module.exports = {
             let match = argv[0].match(/\d+/);
             let _index = match > 0 ? match[0] : 1;
 
-            if(_index >= 1 && _index <= 100)
+            if (_index >= 1 && _index <= 100)
                 index = _index;
 
-            if(!recent_user){
-                if(user_ign[msg.author.id] == undefined)
-                    reject(helper.commandHelp('ign-set'));
+            if (!recent_user) {
+                if (user_ign[msg.author.id] == undefined)
+                    reject(helper.commandHelp('set'));
                 else
                     reject(helper.commandHelp('recent'));
-            }else{
-                osu.get_recent({user: recent_user, pass: pass, index: index}, (err, recent, strains_bar, ur_promise) => {
-                    if(err){
+            } else {
+                osu.get_recent({ user: recent_user, pass: pass, index: index }, (err, recent, strains_bar, ur_promise) => {
+                    if (err) {
                         helper.error(err);
                         reject(err);
-                    }else{
+                    } else {
                         let embed = osu.format_embed(recent);
                         helper.updateLastBeatmap(recent, msg.channel.id, last_beatmap);
 
-                        if(ur_promise){
+                        if (ur_promise) {
                             resolve({
                                 embed: embed,
-                                files: [{attachment: strains_bar, name: 'strains_bar.png'}],
+                                files: [{ attachment: strains_bar, name: 'strains_bar.png' }],
                                 edit_promise: new Promise((resolve, reject) => {
                                     ur_promise.then(recent => {
                                         embed = osu.format_embed(recent);
-                                        resolve({embed});
+                                        resolve({ embed });
                                     });
-                                })});
-                        }else{
+                                })
+                            });
+                        } else {
                             resolve({
                                 embed: embed,
-                                files: [{attachment: strains_bar, name: 'strains_bar.png'}]
+                                files: [{ attachment: strains_bar, name: 'strains_bar.png' }]
                             });
                         }
                     }
