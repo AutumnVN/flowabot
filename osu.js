@@ -1258,6 +1258,57 @@ module.exports = {
         return output;
     },
 
+    calculate_od: function(od_raw, mods){
+		var mods_string = mods.toLowerCase().replace("+", "");
+		var mods_array = mods_string.match(/.{1,2}/g);
+
+		if(!mods_array)
+			var mods_array = [];
+
+		helper.log(mods_string);
+		helper.log(mods_array);
+
+		let od_time_multiplier = 1, od_multiplier = 1, od, od_ms;
+		if(mods_array.indexOf("dt") > -1){
+			od_time_multiplier *= 1.5;
+		}else if(mods_array.indexOf("ht") > -1){
+			od_time_multiplier *= .75;
+		}
+
+		if(mods_array.indexOf("hr") > -1){
+			od_multiplier *= 1.4;
+		}else if(mods_array.indexOf("ez") > -1){
+			od_multiplier *= 0.5;
+		}
+
+		const od_300_base = 160;
+		const od_100_base = 280;
+		const od_50_base  = 400;
+		const od_300_factor = 12;
+		const od_100_factor = 16;
+		const od_50_factor  = 20;
+		od = Math.min(10, od_raw * od_multiplier);
+
+		let od_300_ms, od_100_ms, od_50_ms;
+		od_300_ms = od_300_base - od_300_factor * od;
+		od_100_ms = od_100_base - od_100_factor * od;
+		od_50_ms  = od_50_base  - od_50_factor  * od;
+
+		let display_od = (od_300_base - od_300_ms/od_time_multiplier)/od_300_factor;
+
+
+        var output = "";
+		if(mods_array.length > 0)
+			output += "OD" + od_raw + "+" + mods_array.join("").toUpperCase() + " -> ";
+
+		output += "OD" + +display_od.toFixed(2) +
+			" (" + [od_300_ms, od_100_ms, od_50_ms].map(
+				odms => (odms/od_time_multiplier).toFixed(2)
+			).join("ms, ") + "ms)";
+
+		return output;
+	},
+
     format_embed: function(recent){
         let embed = {fields: []};
         embed.color = 12277111;
